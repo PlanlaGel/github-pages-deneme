@@ -1,13 +1,42 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>GithubPagesDeneme</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-</head>
-<body>
-  <app-root></app-root>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>GithubPagesDeneme</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <script type="text/javascript">
+      (function (l) {
+        var storedRedirect = sessionStorage.getItem("redirectFrom404");
+        if (storedRedirect) {
+          sessionStorage.removeItem("redirectFrom404");
+          var newLocation = new URL(storedRedirect);
+          // p query parametresinden gerçek yolu al
+          var spaRoute = newLocation.search.substring(3); // ?p= kısmını kaldır
+          if (spaRoute || newLocation.hash) {
+            // hash varsa onu da ekle
+            if (newLocation.hash) {
+              spaRoute = (spaRoute || "") + newLocation.hash;
+            }
+            // base href'den sonraki kısmı alarak history'yi güncelle
+            var baseHref =
+              (document.getElementsByTagName("base")[0] || {}).href || "/";
+            var fullPath = new URL(baseHref).pathname + spaRoute;
+            if (
+              fullPath !==
+              window.location.pathname +
+                window.location.search +
+                window.location.hash
+            ) {
+              window.history.replaceState(null, null, fullPath);
+            }
+          }
+        }
+      })(window.location);
+    </script>
+  </head>
+  <body>
+    <app-root></app-root>
+  </body>
 </html>
