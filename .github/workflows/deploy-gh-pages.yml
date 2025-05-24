@@ -42,7 +42,7 @@ jobs:
           # Angular build çıktısının olduğu klasör (genellikle dist/proje-adi)
           # Projenizin angular.json dosyasındaki outputPath'e göre ayarlayın.
           # Örneğin, immersive'daki proje 'angular-supabase-todo' ise ve outputPath 'dist/angular-supabase-todo' ise:
-          path: "./dist/angular-supabase-todo" # Proje adınıza göre güncelleyin
+          path: "./dist/github-pages-deneme" # Proje adınıza göre güncelleyin
 
       - name: Deploy to GitHub Pages
         id: deployment
