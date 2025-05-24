@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Sayfa Yönlendiriliyor...</title>
+    <script>
+      // GitHub Pages'ın alt dizin yapısını (repository adı) koru
+      var segmentCount = 0;
+      // Eğer siteniz username.github.io/repo-name/ şeklinde ise segmentCount = 1 olmalı
+      // Eğer özel domain ile kök dizinde ise segmentCount = 0 olabilir.
+      // Genellikle repo adıyla birlikte kullanıldığı için 1 varsayılır.
+      // base-href'inizin doğru ayarlandığını varsayıyoruz.
+      var repoName = window.location.pathname.split("/")[1]; // "/repo-name/path" -> "repo-name"
+      if (repoName && window.location.host.includes("github.io")) {
+        segmentCount = 1;
+      }
+
+      var l = window.location;
+      // index.html'e yönlendirirken query string ve hash'i koru
+      var newPath =
+        l.protocol +
+        "//" +
+        l.hostname +
+        (l.port ? ":" + l.port : "") +
+        l.pathname
+          .split("/")
+          .slice(0, 1 + segmentCount)
+          .join("/") + // Ana yolu koru (örneğin /repo-name/)
+        "/?p=" +
+        l.pathname.slice(1).split("/").slice(segmentCount).join("/") + // Alt yolu query parametresi olarak ekle
+        l.search +
+        l.hash;
+
+      // Eğer /repo-name/ ise p boş olabilir, bu durumda sadece index.html'e git
+      if (
+        l.pathname
+          .split("/")
+          .slice(1 + segmentCount)
+          .join("/") === ""
+      ) {
+        newPath =
+          l.protocol +
+          "//" +
+          l.hostname +
+          (l.port ? ":" + l.port : "") +
+          l.pathname
+            .split("/")
+            .slice(0, 1 + segmentCount)
+            .join("/") +
+          "/" +
+          l.search +
+          l.hash;
+      }
+
+      sessionStorage.setItem("redirectFrom404", newPath);
+      window.location.replace(
+        l.protocol +
+          "//" +
+          l.hostname +
+          (l.port ? ":" + l.port : "") +
+          l.pathname
+            .split("/")
+            .slice(0, 1 + segmentCount)
+            .join("/") +
+          "/"
+      );
+    </script>
+  </head>
+  <body>
+    Eğer otomatik olarak yönlendirilmezseniz, lütfen
+    <a
+      href="javascript:window.location.replace(sessionStorage.getItem('redirectFrom404') || '/')"
+      >buraya tıklayın</a
+    >.
+  </body>
+</html>
