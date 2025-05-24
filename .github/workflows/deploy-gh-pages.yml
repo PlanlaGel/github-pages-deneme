@@ -1,0 +1,49 @@
+name: Deploy Angular App to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # Sadece 'main' dalına push yapıldığında tetiklenir
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # GitHub Pages'a yazma izni için
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18" # Angular sürümünüze uygun Node.js versiyonu
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Angular app for GitHub Pages
+        # ÖNEMLİ: --base-href parametresi GitHub Pages için kritik.
+        # Repository adınız 'angular-supabase-todo-app' ise base-href /angular-supabase-todo-app/ olmalıdır.
+        # Eğer kullanıcı adınız 'kullanici' ve repo adınız 'kullanici.github.io' ise base-href '/' olabilir.
+        run: npm run build -- --configuration production --base-href /${{ github.event.repository.name }}/
+        # package.json'daki build script'ini de buna göre güncelleyebilirsiniz.
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Angular build çıktısının olduğu klasör (genellikle dist/proje-adi)
+          # Projenizin angular.json dosyasındaki outputPath'e göre ayarlayın.
+          # Örneğin, immersive'daki proje 'angular-supabase-todo' ise ve outputPath 'dist/angular-supabase-todo' ise:
+          path: "./dist/angular-supabase-todo" # Proje adınıza göre güncelleyin
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
